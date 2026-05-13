@@ -28,4 +28,12 @@ public class CategoriasProductoService {
     public List<String> findAllNombreCategorias(){
         return categoriasProductoRepository.findAllNames();
     }
+
+    public CategoriasProducto save(CategoriasProducto categoria) {
+        return categoriasProductoRepository.save(categoria);
+    }
+
+    public void deleteById(int id) {
+        categoriasProductoRepository.deleteById(id);
+    }
 }

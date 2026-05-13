@@ -22,4 +22,6 @@ public interface DonationRepository extends JpaRepository<Donation, Integer> {
     List<Object[]> findRankingEmpresas();
 
     Donation findTopByEstadoIdAndDonanteRolOrderByFechaDonacionDesc(Integer estadoId, Rol rol);
+
+    long countByEstadoNombre(String nombre);
 }

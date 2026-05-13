@@ -1,5 +1,6 @@
 package com.proyecto.daw.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
@@ -22,8 +23,9 @@ public class Contact {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String mensaje;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_usuario")
+    @JsonIgnoreProperties({"password", "hibernateLazyInitializer", "handler", "solicitudes", "donaciones"})
     private Usuario usuario;
 
     @Column(name = "fecha_envio", insertable = false, updatable = false)

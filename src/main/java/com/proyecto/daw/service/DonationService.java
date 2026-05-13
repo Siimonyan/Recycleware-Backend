@@ -114,4 +114,12 @@ public class DonationService {
 
         return respuesta;
     }
+
+    public long count() {
+        return donationRepository.count();
+    }
+
+    public long countByEstado(String estadoNombre) {
+        return donationRepository.countByEstadoNombre(estadoNombre);
+    }
 }

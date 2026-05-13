@@ -11,10 +11,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @RequestMapping("/images")
 @Controller
+@org.springframework.web.bind.annotation.CrossOrigin(origins = "*")
 public class FileController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Resource> getImage(@PathVariable int id) throws Exception {
+        System.out.println(">>> PETICIÓN DE IMAGEN RECIBIDA: ID = " + id);
         String[] listaImagenes = {
                 "static/images/resized_artecPc.jpg",
                 "static/images/resized_Dell_Computer_Monitor.png",

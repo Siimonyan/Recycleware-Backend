@@ -362,3 +362,12 @@ INSERT INTO solicitudes (id_solicitante, id_producto, motivo, id_estado) VALUES
     (14, 5, 'Necesito ampliar mi equipo actual para poder hacer los trabajos de clase.', 5),
     (15, 6, 'Para poder estudiar mejor, un segundo monitor me ayudaría muchísimo.', 5),
     (16, 8, 'Mi portátil se rompió y ahora mismo no puedo comprar otro para seguir el curso.', 5);
+
+-- Mensajes de contacto de prueba
+INSERT INTO mensajes_contacto (nombre, correo, mensaje, id_usuario) VALUES
+    ('Luis Part', 'luis.part@particular.com', '¿Cuándo llegará el ratón que solicité? Ya ha pasado más de una semana desde que fue aprobada.', 2),
+    ('Bela Emp', 'bela.emp@empresa.com', 'Queremos realizar una donación de 15 monitores de 24 pulgadas en buen estado. ¿Cómo procedemos?', 1),
+    ('Aaron Part', 'aaron.part@particular.com', 'He intentado iniciar sesión varias veces y la plataforma no me deja acceder. ¿Podéis ayudarme?', 6),
+    ('Ricardo Emp', 'ricardo.emp@empresa.com', 'Somos una empresa interesada en colaborar regularmente con donaciones de material informático reacondicionado.', 5),
+    ('Gines Emp', 'Gines.emp@empresa.com', 'Tenemos 30 teclados y ratones que ya no utilizamos. ¿Los aceptáis aunque algunos tengan pequeños desperfectos estéticos?', 3);
+

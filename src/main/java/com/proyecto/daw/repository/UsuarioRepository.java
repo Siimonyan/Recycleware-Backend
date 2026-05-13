@@ -12,12 +12,10 @@ import com.proyecto.daw.model.Usuario;
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
 
-    @Query(value = "SELECT * FROM usuarios WHERE id = :id", nativeQuery = true)
-    Usuario findById(@Param("id") int UsuarioId);
-
     @Query(value = "SELECT * FROM usuarios WHERE UPPER(nombre) LIKE UPPER(CONCAT('%', :cadena, '%')) OR UPPER(razon_social) LIKE UPPER(CONCAT('%', :cadena, '%'))", nativeQuery = true)
     List<Usuario> findByNameContaining(@Param("cadena") String name);
 
-    // para que Spring Boot cree el SQL automáticamente: SELECT * FROM usuarios WHERE correo = ?
     Usuario findByCorreo(String correo);
+
+    long countByRol(com.proyecto.daw.model.Rol rol);
 }

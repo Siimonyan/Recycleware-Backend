@@ -31,18 +31,25 @@ public class ProductoService {
     }
 
     public List<Producto> findByCategoriaString(String categoria) {
-        List<Producto> lista = productoRepository.findAll();
-        
-        for (Producto producto : lista) {
-            if (producto.getCategoria().getNombre() == categoria) {
-                lista.add(producto);
+        List<Producto> all = productoRepository.findAll();
+        List<Producto> filtered = new ArrayList<>();
+        for (Producto producto : all) {
+            if (producto.getCategoria().getNombre().equalsIgnoreCase(categoria)) {
+                filtered.add(producto);
             }
         }
-        return lista;
+        return filtered;
     }
 
     public List<Producto> findByEstadoString(String estado) {
-        return null;
+        List<Producto> all = productoRepository.findAll();
+        List<Producto> filtered = new ArrayList<>();
+        for (Producto producto : all) {
+            if (producto.getEstado().getNombre().equalsIgnoreCase(estado)) {
+                filtered.add(producto);
+            }
+        }
+        return filtered;
     }
 
     public List<Producto> findAllDisponibles(){
@@ -59,6 +66,12 @@ public class ProductoService {
         return productoRepository.count();
     }
 
+    public Long countByDisponibilidad(String nombreDisp) {
+        return productoRepository.findAll().stream()
+            .filter(p -> p.getDisponibilidad() != null && nombreDisp.equalsIgnoreCase(p.getDisponibilidad().getNombre()))
+            .count();
+    }
+
     public boolean marcarProductoNoDisponibleById(int id){
         Producto p = productoRepository.findSqlById(id);
         if (p == null) {
@@ -67,5 +80,13 @@ public class ProductoService {
         p.setDisponibilidad(disponibilidadProductoRepository.findSqlById(2));
         productoRepository.save(p);
         return true;
+    }
+
+    public Producto save(Producto producto) {
+        return productoRepository.save(producto);
+    }
+
+    public void deleteById(int id) {
+        productoRepository.deleteById(id);
     }
 }

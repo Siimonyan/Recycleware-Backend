@@ -84,4 +84,12 @@ public class RequestService {
     public long countEntregadas() {
         return requestRepository.countByStateName("Entregada");
     }
+
+    public long count() {
+        return requestRepository.count();
+    }
+
+    public long countByEstado(String estadoNombre) {
+        return requestRepository.countByStateName(estadoNombre);
+    }
 }

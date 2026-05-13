@@ -20,11 +20,20 @@ public class UsuarioService {
     }
 
     public Usuario findById(int id) {
-        return usuarioRepository.findById(id);
+        return usuarioRepository.findById(id).orElse(null);
     }
 
     public Long count() {
         return usuarioRepository.count();
+    }
+
+    public Long countByRol(String rolStr) {
+        try {
+            com.proyecto.daw.model.Rol rol = com.proyecto.daw.model.Rol.valueOf(rolStr.toUpperCase());
+            return usuarioRepository.countByRol(rol);
+        } catch (Exception e) {
+            return 0L;
+        }
     }
 
     public List<Usuario> findByNameContaining(String name) {
@@ -40,21 +49,38 @@ public class UsuarioService {
     }
 
     public Usuario actualizarUsuario(Usuario datosNuevos) {
-        return usuarioRepository.findById(datosNuevos.getId()).map(usuarioExistente -> {
-            if (datosNuevos.getCorreo() != null && !datosNuevos.getCorreo().equals(usuarioExistente.getCorreo())) {
-                usuarioExistente.setCorreo(datosNuevos.getCorreo());
-            }
+        Usuario usuarioExistente = usuarioRepository.findById((int)datosNuevos.getId()).orElse(null);
+        if (usuarioExistente == null) return null;
 
-            usuarioExistente.setNombre(datosNuevos.getNombre());
-            usuarioExistente.setTelefono(datosNuevos.getTelefono());
-            usuarioExistente.setDireccion(datosNuevos.getDireccion());
-            usuarioExistente.setLocalidad(datosNuevos.getLocalidad());
-            usuarioExistente.setCodigoPostal(datosNuevos.getCodigoPostal());
-            usuarioExistente.setNombreContacto(datosNuevos.getNombreContacto());
-            usuarioExistente.setRazonSocial(datosNuevos.getRazonSocial());
+        if (datosNuevos.getCorreo() != null) usuarioExistente.setCorreo(datosNuevos.getCorreo());
+        usuarioExistente.setNombre(datosNuevos.getNombre());
+        usuarioExistente.setTelefono(datosNuevos.getTelefono());
+        usuarioExistente.setDireccion(datosNuevos.getDireccion());
+        usuarioExistente.setLocalidad(datosNuevos.getLocalidad());
+        usuarioExistente.setCodigoPostal(datosNuevos.getCodigoPostal());
+        usuarioExistente.setNombreContacto(datosNuevos.getNombreContacto());
+        usuarioExistente.setRazonSocial(datosNuevos.getRazonSocial());
+        
+        if (datosNuevos.getRol() != null) {
+            usuarioExistente.setRol(datosNuevos.getRol());
+        }
 
+        System.out.println(">>> GUARDANDO CAMBIOS DE USUARIO...");
+        Usuario saved = usuarioRepository.save(usuarioExistente);
+        System.out.println(">>> CAMBIOS GUARDADOS CON ÉXITO.");
+        return saved;
+    }
 
-            return usuarioRepository.save(usuarioExistente);
-        }).orElse(null);
+    public void deleteById(int id) {
+        usuarioRepository.deleteById(id);
+    }
+
+    public Usuario actualizarRol(int id, com.proyecto.daw.model.Rol nuevoRol) {
+        Usuario usuario = usuarioRepository.findById(id).orElse(null);
+        if (usuario != null) {
+            usuario.setRol(nuevoRol);
+            return usuarioRepository.save(usuario);
+        }
+        return null;
     }
 }
