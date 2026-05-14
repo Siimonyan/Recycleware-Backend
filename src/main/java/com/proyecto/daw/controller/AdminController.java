@@ -80,9 +80,24 @@ public class AdminController {
             dto.put("correo", c.getCorreo());
             dto.put("mensaje", c.getMensaje());
             dto.put("fechaEnvio", c.getFechaEnvio() != null ? c.getFechaEnvio().toString() : null);
+            dto.put("respuesta", c.getRespuesta());
+            dto.put("leido", c.isLeido());
             return dto;
         }).collect(java.util.stream.Collectors.toList());
         return ResponseEntity.ok(resultado);
+    }
+
+    @PutMapping("/mensajes/{id}")
+    public ResponseEntity<Contact> respondToMessage(@PathVariable int id, @RequestBody Map<String, String> body) {
+        Contact contact = contactService.findById(id);
+        if (contact == null) return ResponseEntity.notFound().build();
+
+        String respuesta = body.get("respuesta");
+        contact.setRespuesta(respuesta);
+        contact.setLeido(true);
+        contact.setFechaRespuesta(java.time.LocalDateTime.now());
+        
+        return ResponseEntity.ok(contactService.save(contact));
     }
 
     // --- GESTIÓN DE USUARIOS ---
@@ -130,25 +145,50 @@ public class AdminController {
     }
 
     @DeleteMapping("/usuarios/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable int id) {
-        usuarioService.deleteById(id);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<?> deleteUser(@PathVariable int id) {
+        try {
+            // Seguridad: El admin no puede borrarse a sí mismo
+            org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+            if (auth != null && auth.getPrincipal() instanceof org.springframework.security.core.userdetails.UserDetails) {
+                org.springframework.security.core.userdetails.UserDetails userDetails = (org.springframework.security.core.userdetails.UserDetails) auth.getPrincipal();
+                Usuario currentAdmin = usuarioService.findByCorreo(userDetails.getUsername());
+                if (currentAdmin != null && currentAdmin.getId().equals(id)) {
+                    return ResponseEntity.status(403).body(java.util.Map.of("error", "No puedes eliminar tu propia cuenta de administrador."));
+                }
+            }
+
+            usuarioService.deleteById(id);
+            return ResponseEntity.ok().build();
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
+            return ResponseEntity.status(409).body(java.util.Map.of("error", "No se puede eliminar el usuario porque tiene donaciones, solicitudes o mensajes asociados."));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(java.util.Map.of("error", "Error interno al intentar eliminar el usuario."));
+        }
     }
 
+    @Autowired
+    private EstadosProductoService estadosProductoService;
+
+    @Autowired
+    private DisponibilidadProductoService disponibilidadProductoService;
+
     // --- GESTIÓN DE PRODUCTOS ---
+
+    @GetMapping("/productos/estados")
+    public ResponseEntity<List<com.proyecto.daw.model.EstadosProducto>> getProductStates() {
+        return ResponseEntity.ok(estadosProductoService.findAll());
+    }
+
+    @GetMapping("/productos/disponibilidades")
+    public ResponseEntity<List<com.proyecto.daw.model.DisponibilidadProducto>> getProductAvailabilities() {
+        return ResponseEntity.ok(disponibilidadProductoService.findAll());
+    }
 
     @GetMapping("/productos")
     public ResponseEntity<List<Producto>> getProducts(
             @RequestParam(required = false) String categoria,
             @RequestParam(required = false) String estado) {
         
-        // FIX TEMPORAL: Restaurar imagen del Ratón Mars si se rompió en las pruebas
-        Producto p1 = productoService.findById(1);
-        if (p1 != null && p1.getImagenUrl() != null && !p1.getImagenUrl().startsWith("/api")) {
-            p1.setImagenUrl("/api/images/6");
-            productoService.save(p1);
-        }
-
         if (categoria != null) {
             return ResponseEntity.ok(productoService.findByCategoriaString(categoria));
         }
@@ -170,36 +210,54 @@ public class AdminController {
     }
 
     @DeleteMapping("/productos/{id}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable int id) {
-        productoService.deleteById(id);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<?> deleteProduct(@PathVariable int id) {
+        try {
+            productoService.deleteById(id);
+            return ResponseEntity.ok().build();
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
+            return ResponseEntity.status(409).body(java.util.Map.of("error", "No se puede eliminar el producto porque tiene solicitudes (pedidos) asociadas."));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(java.util.Map.of("error", "Error interno al intentar eliminar el producto."));
+        }
     }
 
     @PostMapping("/productos/{id}/imagen")
     public ResponseEntity<Map<String, String>> uploadProductImage(@PathVariable int id, @RequestParam("file") MultipartFile file) {
         try {
+            System.out.println(">>> RECIBIENDO IMAGEN PARA PRODUCTO ID: " + id);
             Producto producto = productoService.findById(id);
-            if (producto == null) return ResponseEntity.notFound().build();
+            if (producto == null) {
+                System.out.println(">>> PRODUCTO NO ENCONTRADO");
+                return ResponseEntity.notFound().build();
+            }
 
-            // Directorio de subida (fuera del classpath para persistencia real)
             String uploadDir = "uploads/productos/";
             Path uploadPath = Paths.get(uploadDir);
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath);
+                System.out.println(">>> DIRECTORIO CREADO: " + uploadPath.toAbsolutePath());
             }
 
             String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
             Path filePath = uploadPath.resolve(fileName);
+            System.out.println(">>> GUARDANDO EN: " + filePath.toAbsolutePath());
+            
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-            // Guardamos la URL/Nombre en el producto
             producto.setImagenUrl(fileName);
             productoService.save(producto);
+            System.out.println(">>> IMAGEN GUARDADA CON ÉXITO: " + fileName);
 
             Map<String, String> response = new HashMap<>();
             response.put("fileName", fileName);
             return ResponseEntity.ok(response);
         } catch (IOException e) {
+            System.err.println(">>> ERROR DE IO AL SUBIR IMAGEN: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        } catch (Exception e) {
+            System.err.println(">>> ERROR INESPERADO AL SUBIR IMAGEN: " + e.getMessage());
+            e.printStackTrace();
             return ResponseEntity.internalServerError().build();
         }
     }
@@ -212,14 +270,22 @@ public class AdminController {
     }
 
     @PostMapping("/categorias")
-    public ResponseEntity<CategoriasProducto> createCategory(@RequestBody CategoriasProducto categoria) {
-        return ResponseEntity.ok(categoriasService.save(categoria));
+    public ResponseEntity<?> createCategory(@RequestBody CategoriasProducto categoria) {
+        try {
+            return ResponseEntity.ok(categoriasService.save(categoria));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
     }
 
     @PutMapping("/categorias/{id}")
-    public ResponseEntity<CategoriasProducto> updateCategory(@PathVariable int id, @RequestBody CategoriasProducto categoria) {
-        categoria.setId(id);
-        return ResponseEntity.ok(categoriasService.save(categoria));
+    public ResponseEntity<?> updateCategory(@PathVariable int id, @RequestBody CategoriasProducto categoria) {
+        try {
+            categoria.setId(id);
+            return ResponseEntity.ok(categoriasService.save(categoria));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
     }
 
     @DeleteMapping("/categorias/{id}")
@@ -243,6 +309,12 @@ public class AdminController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
+    }
+
+    @DeleteMapping("/solicitudes/{id}")
+    public ResponseEntity<Void> deleteRequest(@PathVariable int id) {
+        requestService.deleteById(id);
+        return ResponseEntity.ok().build();
     }
 
     // --- GESTIÓN DE DONACIONES ---

@@ -89,6 +89,10 @@ public class RequestService {
         return requestRepository.count();
     }
 
+    public void deleteById(int id) {
+        requestRepository.deleteById(id);
+    }
+
     public long countByEstado(String estadoNombre) {
         return requestRepository.countByStateName(estadoNombre);
     }

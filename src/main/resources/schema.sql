@@ -106,6 +106,9 @@ CREATE TABLE mensajes_contacto (
     mensaje TEXT NOT NULL,
     id_usuario INT NULL,
     fecha_envio TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    respuesta TEXT DEFAULT NULL,
+    leido BOOLEAN NOT NULL DEFAULT FALSE,
+    fecha_respuesta TIMESTAMP NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (id_usuario) REFERENCES usuarios(id)
 );

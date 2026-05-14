@@ -30,4 +30,13 @@ public class Contact {
 
     @Column(name = "fecha_envio", insertable = false, updatable = false)
     private LocalDateTime fechaEnvio;
+
+    @Column(columnDefinition = "TEXT")
+    private String respuesta;
+
+    @Column(nullable = false)
+    private boolean leido = false;
+
+    @Column(name = "fecha_respuesta")
+    private LocalDateTime fechaRespuesta;
 }

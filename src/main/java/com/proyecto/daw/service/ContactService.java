@@ -12,7 +12,6 @@ public class ContactService {
     @Autowired
     private ContactRepository contactRepository;
 
-   
     public Contact guardarMensaje(Contact contacto) {
         return contactRepository.save(contacto);
     }
@@ -21,5 +20,11 @@ public class ContactService {
         return contactRepository.findAll();
     }
 
+    public Contact findById(int id) {
+        return contactRepository.findById(id).orElse(null);
+    }
 
+    public Contact save(Contact contact) {
+        return contactRepository.save(contact);
+    }
 }
