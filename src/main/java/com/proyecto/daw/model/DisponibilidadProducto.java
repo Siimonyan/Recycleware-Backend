@@ -49,4 +49,7 @@ public class DisponibilidadProducto implements Serializable {
     @JsonIgnoreProperties("disponibilidad")
     private Set<Producto> productos;
 
+    public DisponibilidadProducto(Integer id) {
+        this.id = id;
+    }
 }

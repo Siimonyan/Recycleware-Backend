@@ -46,4 +46,7 @@ public class CategoriasProducto implements Serializable {
     @JsonIgnoreProperties("categoria")
     private Set<Producto> productos;
 
+    public CategoriasProducto(Integer id) {
+        this.id = id;
+    }
 }
