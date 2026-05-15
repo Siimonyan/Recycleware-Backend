@@ -51,23 +51,23 @@ public class DonationService {
         
         donation.setId(null);
 
-        
         if (donation.getDonante() != null && donation.getDonante().getId() != null) {
-            Usuario Usuario = UsuarioRepository.findById(donation.getDonante().getId())
+            Usuario usuario = UsuarioRepository.findById(donation.getDonante().getId())
                     .orElseThrow(() -> new ResourceNotFoundException(
                             "El donante con ID " + donation.getDonante().getId() + " no existe."));
-            donation.setDonante(Usuario);
+            donation.setDonante(usuario);
+        } else {
+            donation.setDonante(null);
         }
 
+        int targetStateId = (donation.getDonante() != null) ? 1 : 3;
         
-        if (donation.getEstado() != null && donation.getEstado().getId() != null) {
-            DonationState state = DonationStateRepository.findById(donation.getEstado().getId())
-                    .orElseThrow(() -> new ResourceNotFoundException(
-                            "El estado con ID " + donation.getEstado().getId() + " no existe."));
-            donation.setEstado(state);
-        }
+        DonationState state = DonationStateRepository.findById(targetStateId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "El estado de donación con ID " + targetStateId + " no existe."));
+        
+        donation.setEstado(state);
 
-        
         return donationRepository.save(donation);
     }
 
