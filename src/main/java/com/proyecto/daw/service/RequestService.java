@@ -70,15 +70,32 @@ public class RequestService {
             throw new IllegalArgumentException("Error: No se ha encontrado el estado con ID " + idNuevoEstado);
         }
 
-        if (nuevoEstado.getName().equals("Aprobada") || nuevoEstado.getName().equals("Entregada")) {
+        if (nuevoEstado.getName().equals("Aprobada")) {
             productoService.marcarProductoNoDisponibleById(solicitud.getProduct().getId());
+            rechazarOtrasSolicitudes(solicitud.getProduct().getId(), idSolicitud);
+        } else if (nuevoEstado.getName().equals("Entregada")) {
+            productoService.marcarProductoEliminadoById(solicitud.getProduct().getId());
+            rechazarOtrasSolicitudes(solicitud.getProduct().getId(), idSolicitud);
         }
 
         solicitud.setState(nuevoEstado);
 
-
-
         return requestRepository.save(solicitud);
+    }
+
+    private void rechazarOtrasSolicitudes(int idProducto, int idSolicitudExcluida) {
+        List<Request> solicitudesDelProducto = requestRepository.findByProductId(idProducto);
+        RequestState estadoDenegado = requestStateRepository.findById(4).orElse(null); // 4 = Denegada
+        
+        if (estadoDenegado == null) return;
+
+        for (Request r : solicitudesDelProducto) {
+            // Rechazamos todas las que no sean la actual y no estén ya finalizadas (Denegada/Entregada)
+            if (r.getId() != idSolicitudExcluida && r.getState().getId() != 4 && r.getState().getId() != 5) {
+                r.setState(estadoDenegado);
+                requestRepository.save(r);
+            }
+        }
     }
 
     public long countEntregadas() {

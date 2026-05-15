@@ -82,11 +82,43 @@ public class ProductoService {
         return true;
     }
 
+    public boolean marcarProductoEliminadoById(int id){
+        Producto p = productoRepository.findSqlById(id);
+        if (p == null) {
+            return false;
+        }
+        p.setDisponibilidad(disponibilidadProductoRepository.findSqlById(3));
+        productoRepository.save(p);
+        return true;
+    }
+
     public Producto save(Producto producto) {
         return productoRepository.save(producto);
     }
 
+    @Autowired
+    private com.proyecto.daw.repository.RequestRepository requestRepository;
+
+    @Autowired
+    private com.proyecto.daw.repository.DisponibilidadProductoRepository disponibilidadRepo;
+
     public void deleteById(int id) {
-        productoRepository.deleteById(id);
+        Producto p = productoRepository.findSqlById(id);
+        if (p == null) return;
+
+        List<com.proyecto.daw.model.Request> requests = requestRepository.findByProductId(id);
+        
+        // Verificar si hay solicitudes activas (bloqueamos el borrado lógico si hay procesos pendientes)
+        for (com.proyecto.daw.model.Request r : requests) {
+            String stateName = r.getState() != null ? r.getState().getName() : "";
+            if (!stateName.equalsIgnoreCase("Entregada") && !stateName.equalsIgnoreCase("Denegada")) {
+                throw new org.springframework.dao.DataIntegrityViolationException("No se puede eliminar el producto porque tiene solicitudes activas (pendientes o aprobadas).");
+            }
+        }
+
+        // En lugar de borrar físicamente, cambiamos la disponibilidad a "Eliminado" (ID 3)
+        // Esto lo oculta de la web/admin pero mantiene la integridad para el historial de solicitudes
+        p.setDisponibilidad(disponibilidadRepo.findById(3).orElse(null));
+        productoRepository.save(p);
     }
 }

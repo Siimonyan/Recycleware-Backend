@@ -13,7 +13,7 @@ public interface ProductoRepository extends JpaRepository<Producto, Integer> {
 
    
 
-    @Query(value = "SELECT * FROM productos", nativeQuery = true)
+    @Query(value = "SELECT * FROM productos WHERE id_disponibilidad != 3", nativeQuery = true)
     List<Producto> findSqlAll();
 
     @Query(value = "SELECT * FROM productos WHERE id = :id", nativeQuery = true)

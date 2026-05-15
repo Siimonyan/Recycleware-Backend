@@ -11,6 +11,6 @@ public interface RequestRepository extends JpaRepository<Request, Integer> {
     
       
     List<Request> findByApplicantId(int applicantId);
-
+    List<Request> findByProductId(int productId);
     long countByStateName(String stateName);
 }
