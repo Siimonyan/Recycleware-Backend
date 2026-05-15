@@ -42,7 +42,7 @@ public class CategoriasProducto implements Serializable {
     @Column(name="nombre",nullable = false,unique = true)
     private String nombre;
 
-    @OneToMany(mappedBy = "categoria", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "categoria", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JsonIgnoreProperties("categoria")
     private Set<Producto> productos;
 

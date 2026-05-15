@@ -56,6 +56,12 @@ public class CategoriasProductoService {
     }
 
     public void deleteById(int id) {
-        categoriasProductoRepository.deleteById(id);
+        CategoriasProducto categoria = findById(id);
+        if (categoria != null) {
+            if (categoria.getProductos() != null && !categoria.getProductos().isEmpty()) {
+                throw new RuntimeException("No se puede eliminar una categoría que tiene artículos asociados.");
+            }
+            categoriasProductoRepository.deleteById(id);
+        }
     }
 }

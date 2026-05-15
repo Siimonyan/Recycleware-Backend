@@ -288,9 +288,13 @@ public class AdminController {
     }
 
     @DeleteMapping("/categorias/{id}")
-    public ResponseEntity<Void> deleteCategory(@PathVariable int id) {
-        categoriasService.deleteById(id);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<?> deleteCategory(@PathVariable int id) {
+        try {
+            categoriasService.deleteById(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(409).body(Map.of("error", e.getMessage()));
+        }
     }
 
     // --- GESTIÓN DE SOLICITUDES ---
