@@ -281,8 +281,7 @@ public class AdminController {
     @PutMapping("/categorias/{id}")
     public ResponseEntity<?> updateCategory(@PathVariable int id, @RequestBody CategoriasProducto categoria) {
         try {
-            categoria.setId(id);
-            return ResponseEntity.ok(categoriasService.save(categoria));
+            return ResponseEntity.ok(categoriasService.update(id, categoria));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }

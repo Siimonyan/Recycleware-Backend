@@ -14,8 +14,7 @@ public interface CategoriasProductoRepository extends JpaRepository<CategoriasPr
 
     @Query(value = "SELECT nombre FROM categorias_producto", nativeQuery = true)
     List<String> findAllNames();
-    
-    @Query(value = "SELECT * FROM categorias_producto WHERE id = :id ", nativeQuery = true)
-    CategoriasProducto findSqlById(@Param("id") int id);
+
+    java.util.Optional<CategoriasProducto> findByNombre(String nombre);
 
 }
