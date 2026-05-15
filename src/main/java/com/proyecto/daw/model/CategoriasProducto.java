@@ -35,7 +35,7 @@ public class CategoriasProducto implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id", nullable = false, unique = true)
-    private int id;
+    private Integer id;
 
     @NotBlank(message = "La categoría necesita un nombre")
     @Size(min = 1, max = 45, message = "El tamaño máximo del nombre una categoría es de 45 carácteres")

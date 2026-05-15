@@ -38,7 +38,7 @@ public class DisponibilidadProducto implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, unique = true)
-    private int id;
+    private Integer id;
 
     @NotBlank(message = "La disponibilidad necesita un nombre")
     @Size(min = 1, max = 45, message = "El tamaño máximo del nombre de un estado es de 45 carácteres")
