@@ -158,8 +158,6 @@ INSERT INTO donaciones (id_donante, id_estado, cantidad_productos, descripcion, 
 VALUES (3, 2, 2, 'Servidor de rack para desguace', 40.0);
 INSERT INTO donaciones (id_donante, id_estado, cantidad_productos, descripcion, peso)
 VALUES (1, 3, 10, 'Caja con teclados y ratones varios', 5.0);
-INSERT INTO donaciones (id_donante, id_estado, cantidad_productos, descripcion, peso)
-VALUES (null, 3, 10, 'Caja con teclados y ratones varios', 5.0);
 
 -- Donación para el usuario 2 (Recycleware SL - Rol: EMPRESA)
 INSERT INTO donaciones (id_donante, id_estado, cantidad_productos, descripcion, peso)
@@ -168,6 +166,10 @@ VALUES (2, 3, 50, 'Donación de prueba Empresa A', 10.0);
 -- Donación para el usuario 5 (Bela - Rol: EMPRESA)
 INSERT INTO donaciones (id_donante, id_estado, cantidad_productos, descripcion, peso)
 VALUES (5, 3, 30, 'Donación de prueba Empresa B', 5.0);
+
+-- Donación ANÓNIMA de una Empresa (Usuario 11 - TechCorp) para probar la privacidad
+INSERT INTO donaciones (id_donante, id_estado, cantidad_productos, descripcion, peso, es_anonimo)
+VALUES (11, 1, 15, 'Lote de tablets que no queremos que salgan en el ranking público', 8.5, true);
 
 -- Donacoipnes finales
 
