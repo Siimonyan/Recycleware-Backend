@@ -18,4 +18,8 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
     Usuario findByCorreo(String correo);
 
     long countByRol(com.proyecto.daw.model.Rol rol);
+
+    long countByActivoTrue();
+
+    long countByRolAndActivoTrue(com.proyecto.daw.model.Rol rol);
 }

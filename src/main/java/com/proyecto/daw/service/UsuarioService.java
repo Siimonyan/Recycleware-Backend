@@ -24,13 +24,13 @@ public class UsuarioService {
     }
 
     public Long count() {
-        return usuarioRepository.count();
+        return usuarioRepository.countByActivoTrue();
     }
 
     public Long countByRol(String rolStr) {
         try {
             com.proyecto.daw.model.Rol rol = com.proyecto.daw.model.Rol.valueOf(rolStr.toUpperCase());
-            return usuarioRepository.countByRol(rol);
+            return usuarioRepository.countByRolAndActivoTrue(rol);
         } catch (Exception e) {
             return 0L;
         }
