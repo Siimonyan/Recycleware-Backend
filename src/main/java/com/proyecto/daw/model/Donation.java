@@ -31,4 +31,7 @@ public class Donation {
     private String descripcion;
 
     private Float peso;
+
+    @Column(name = "es_anonimo", columnDefinition = "boolean default false")
+    private Boolean esAnonimo;
 }

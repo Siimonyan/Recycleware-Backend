@@ -17,11 +17,17 @@ public interface DonationRepository extends JpaRepository<Donation, Integer> {
             "WHERE d.donante.rol = 'EMPRESA' " +
             "AND d.donante.razonSocial IS NOT NULL " +
             "AND d.estado.id IN (3, 4) " +
+            "AND (d.esAnonimo = false OR d.esAnonimo IS NULL) " +
             "GROUP BY d.donante.id, d.donante.razonSocial " +
             "ORDER BY SUM(d.cantidadProductos) DESC")
     List<Object[]> findRankingEmpresas();
 
-    Donation findTopByEstadoIdAndDonanteRolOrderByFechaDonacionDesc(Integer estadoId, Rol rol);
+    @Query("SELECT d FROM Donation d " +
+           "WHERE d.estado.id = :estadoId " +
+           "AND d.donante.rol = :rol " +
+           "AND (d.esAnonimo = false OR d.esAnonimo IS NULL) " +
+           "ORDER BY d.fechaDonacion DESC LIMIT 1")
+    Donation findTopPublicDonation(Integer estadoId, Rol rol);
 
     long countByEstadoNombre(String nombre);
 }

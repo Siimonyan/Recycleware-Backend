@@ -96,7 +96,7 @@ public class DonationService {
 
     
     public java.util.Map<String, Object> obtenerUltimaDonacionFormateada() {
-        Donation ultima = donationRepository.findTopByEstadoIdAndDonanteRolOrderByFechaDonacionDesc(3, Rol.EMPRESA);
+        Donation ultima = donationRepository.findTopPublicDonation(3, Rol.EMPRESA);
 
         if (ultima == null) {
             return null;
