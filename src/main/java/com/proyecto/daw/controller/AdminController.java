@@ -47,6 +47,7 @@ public class AdminController {
 
         // Usuarios
         stats.put("totalUsuarios", usuarioService.count());
+        stats.put("totalAdmins", usuarioService.countByRol("ADMIN"));
         stats.put("totalParticulares", usuarioService.countByRol("PARTICULAR"));
         stats.put("totalEmpresas", usuarioService.countByRol("EMPRESA"));
 
@@ -58,6 +59,7 @@ public class AdminController {
         // Solicitudes
         stats.put("totalSolicitudes", requestService.count() - requestService.countByEstado("Entregada") - requestService.countByEstado("Denegada"));
         stats.put("solicitudesPendientes", requestService.countByEstado("Pendiente"));
+        stats.put("solicitudesEnRevision", requestService.countByEstado("En Revisión"));
         stats.put("solicitudesAprobadas", requestService.countByEstado("Aprobada"));
         stats.put("solicitudesDenegadas", requestService.countByEstado("Denegada"));
         stats.put("solicitudesEntregadas", requestService.countByEstado("Entregada"));
@@ -65,6 +67,7 @@ public class AdminController {
         // Donaciones
         stats.put("totalDonaciones", donationService.count());
         stats.put("donacionesPendientes", donationService.countByEstado("Pendiente"));
+        stats.put("donacionesEnRecogida", donationService.countByEstado("En Recogida"));
         stats.put("donacionesRecibidas", donationService.countByEstado("Recibido"));
 
         return ResponseEntity.ok(stats);
