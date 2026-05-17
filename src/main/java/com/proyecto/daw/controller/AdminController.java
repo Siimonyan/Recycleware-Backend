@@ -56,7 +56,7 @@ public class AdminController {
         stats.put("productosReservados", productoService.countByDisponibilidad("Reservado"));
 
         // Solicitudes
-        stats.put("totalSolicitudes", requestService.count());
+        stats.put("totalSolicitudes", requestService.count() - requestService.countByEstado("Entregada") - requestService.countByEstado("Denegada"));
         stats.put("solicitudesPendientes", requestService.countByEstado("Pendiente"));
         stats.put("solicitudesAprobadas", requestService.countByEstado("Aprobada"));
         stats.put("solicitudesDenegadas", requestService.countByEstado("Denegada"));
