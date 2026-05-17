@@ -51,7 +51,7 @@ public class AdminController {
         stats.put("totalEmpresas", usuarioService.countByRol("EMPRESA"));
 
         // Productos
-        stats.put("totalProductos", productoService.count());
+        stats.put("totalProductos", productoService.countByDisponibilidad("Disponible") + productoService.countByDisponibilidad("Reservado"));
         stats.put("productosDisponibles", productoService.countByDisponibilidad("Disponible"));
         stats.put("productosReservados", productoService.countByDisponibilidad("Reservado"));
 

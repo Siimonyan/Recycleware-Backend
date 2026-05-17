@@ -127,7 +127,7 @@ VALUES ('Torre Artec netanya', 3, 1, 1, 'Core I5 8RAM 1TB hhd y lector de Dvd', 
     
     -- Componentes
 INSERT INTO productos(nombre, id_categoria, id_estado, id_disponibilidad, descripcion, imagen_url)
-VALUES ('Procesador Intel i7-6700K', 4, 1, 2, 'Procesador con apenas uso', '/api/images/7');
+VALUES ('Procesador Intel i7-6700K', 4, 1, 1, 'Procesador con apenas uso', '/api/images/7');
 
 INSERT INTO productos(nombre, id_categoria, id_estado, id_disponibilidad, descripcion, imagen_url)
 VALUES ('GPU Sapphire Radeon HD 5570', 4, 2, 1, 'Tarjeta gráfica con varios años de uso pero todavía funcional ni indicios de estropearse', '/api/images/7');
@@ -143,7 +143,7 @@ VALUES ('Monitor VSDISPLAY LCD', 5, 3, 1, 'Monitor con 3 franjas verticales negr
     
     -- Portatiles
 INSERT INTO productos(nombre, id_categoria, id_estado, id_disponibilidad, descripcion, imagen_url)
-VALUES ('Dell Inspiron', 2, 3, 1, '8Gb Ram 120Gb Hdd. Pantalla dañada por un golpe pero el resto del dispositivo funciona correctamente', '/api/images/3');
+VALUES ('Dell Inspiron', 2, 3, 2, '8Gb Ram 120Gb Hdd. Pantalla dañada por un golpe pero el resto del dispositivo funciona correctamente', '/api/images/3');
 
 INSERT INTO productos(nombre, id_categoria, id_estado, id_disponibilidad, descripcion, imagen_url)
 VALUES ('Lenovo G500s', 2, 1, 1, '8Gb Ram 320Gb Hdd y webcam integrada', '/api/images/4');
@@ -273,13 +273,13 @@ VALUES (1, 6, 'Necesito un monitor para que mi hijo pueda realizar sus tareas es
 
 
 INSERT INTO solicitudes (id_solicitante, id_producto, motivo, id_estado)
-VALUES (3, 3, 'Solicito este equipo para montar un servidor doméstico de pruebas.', 4);
+VALUES (3, 3, 'Solicito este equipo para montar un servidor doméstico de pruebas.', 1);
 
 INSERT INTO solicitudes (id_solicitante, id_producto, motivo, id_estado)
 VALUES (5, 1, 'Mi ratón actual ha dejado de funcionar y no tengo recursos para adquirir uno nuevo en este momento.', 3);
 
 INSERT INTO solicitudes (id_solicitante, id_producto, motivo, id_estado)
-VALUES (7, 8, 'Necesito un portatil para estudiar online el modulo semipresencial.', 5);
+VALUES (7, 8, 'Necesito un portatil para estudiar online el modulo semipresencial.', 3);
 
 ------------------------------------------------------
 -- Más Solicitudes para el Usuario ID 4 (Bela) -------
@@ -361,10 +361,9 @@ VALUES (5, 3, 8, 'Donación de teclados', 1.0);
 INSERT INTO solicitudes (id_solicitante, id_producto, motivo, id_estado) VALUES
     (11, 1, 'Necesito renovar mi ratón para clases de ofimática.', 5),
     (12, 2, 'Mi ratón actual falla mucho y no puedo permitirme uno nuevo.', 5),
-    (13, 3, 'Para mis estudios de administración, este PC me vendría genial.', 5),
+    (13, 3, 'Para mis estudios de administración, este PC me vendría genial.', 1),
     (14, 5, 'Necesito ampliar mi equipo actual para poder hacer los trabajos de clase.', 5),
-    (15, 6, 'Para poder estudiar mejor, un segundo monitor me ayudaría muchísimo.', 5),
-    (16, 8, 'Mi portátil se rompió y ahora mismo no puedo comprar otro para seguir el curso.', 5);
+    (15, 6, 'Para poder estudiar mejor, un segundo monitor me ayudaría muchísimo.', 5);
 
 -- Mensajes de contacto de prueba
 INSERT INTO mensajes_contacto (nombre, correo, mensaje, id_usuario) VALUES
