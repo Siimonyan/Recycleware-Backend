@@ -32,7 +32,7 @@ INSERT INTO estados_solicitud (nombre) VALUES ('Entregada');
 INSERT INTO estados_donacion (id, nombre) VALUES (1, 'Pendiente');
 INSERT INTO estados_donacion (id, nombre) VALUES (2, 'En Recogida');
 INSERT INTO estados_donacion (id, nombre) VALUES (3, 'Recibido');
-INSERT INTO estados_donacion (id, nombre) VALUES (4, 'Procesado');
+-- INSERT INTO estados_donacion (id, nombre) VALUES (4, 'Procesado');
 
 ----------------------------------------------------------------------
 --------------------------Datos iniciales para Recycleware------------
