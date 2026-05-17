@@ -108,7 +108,6 @@ public class ProductoService {
 
         List<com.proyecto.daw.model.Request> requests = requestRepository.findByProductId(id);
         
-        // Verificar si hay solicitudes activas (bloqueamos el borrado lógico si hay procesos pendientes)
         for (com.proyecto.daw.model.Request r : requests) {
             String stateName = r.getState() != null ? r.getState().getName() : "";
             if (!stateName.equalsIgnoreCase("Entregada") && !stateName.equalsIgnoreCase("Denegada")) {
@@ -116,8 +115,6 @@ public class ProductoService {
             }
         }
 
-        // En lugar de borrar físicamente, cambiamos la disponibilidad a "Eliminado" (ID 3)
-        // Esto lo oculta de la web/admin pero mantiene la integridad para el historial de solicitudes
         p.setDisponibilidad(disponibilidadRepo.findById(3).orElse(null));
         productoRepository.save(p);
     }

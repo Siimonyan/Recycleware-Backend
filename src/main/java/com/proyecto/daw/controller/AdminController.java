@@ -169,12 +169,9 @@ public class AdminController {
                 return ResponseEntity.notFound().build();
             }
 
-            // Alternar estado activo (si era null o true -> false, si era false -> true)
             boolean nuevoEstado = usuario.getActivo() != null && !usuario.getActivo();
 
-            // Si el nuevo estado es inactivo (desactivar), aplicamos las validaciones de negocio
             if (!nuevoEstado) {
-                // 1. Validar donaciones pendientes (id_estado = 1) o en recogida (id_estado = 2)
                 List<Donation> donaciones = donationService.findByUsuarioId(id);
                 for (Donation d : donaciones) {
                     if (d.getEstado() != null && (d.getEstado().getId() == 1 || d.getEstado().getId() == 2)) {
@@ -182,7 +179,6 @@ public class AdminController {
                     }
                 }
 
-                // 2. Validar solicitudes aprobadas (id_estado = 3)
                 List<Request> solicitudes = requestService.obtenerSolicitudesPorUsuario(id);
                 for (Request r : solicitudes) {
                     if (r.getState() != null && r.getState().getId() == 3) {
@@ -190,7 +186,6 @@ public class AdminController {
                     }
                 }
 
-                // 3. Denegar automáticamente solicitudes en revisión (id_estado = 2) o pendientes (id_estado = 1)
                 for (Request r : solicitudes) {
                     if (r.getState() != null && (r.getState().getId() == 1 || r.getState().getId() == 2)) {
                         requestService.updateStatus(r.getId(), 4); // 4 = Denegada

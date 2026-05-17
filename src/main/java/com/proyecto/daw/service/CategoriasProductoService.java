@@ -30,7 +30,6 @@ public class CategoriasProductoService {
     }
 
     public CategoriasProducto save(CategoriasProducto categoria) {
-        // Para creación, verificamos si ya existe el nombre
         if (categoria.getId() == null) {
             categoriasProductoRepository.findByNombre(categoria.getNombre()).ifPresent(c -> {
                 throw new RuntimeException("Ya existe una categoría con el nombre: " + categoria.getNombre());
@@ -43,7 +42,6 @@ public class CategoriasProductoService {
         CategoriasProducto existing = categoriasProductoRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Categoría no encontrada con ID: " + id));
         
-        // Verificar si el nuevo nombre ya está en uso por OTRA categoría
         categoriasProductoRepository.findByNombre(details.getNombre()).ifPresent(c -> {
             if (!c.getId().equals(id)) {
                 throw new RuntimeException("Ya existe otra categoría con el nombre: " + details.getNombre());
@@ -51,7 +49,6 @@ public class CategoriasProductoService {
         });
 
         existing.setNombre(details.getNombre());
-        // No tocamos la colección de productos, así se mantiene la relación existente.
         return categoriasProductoRepository.save(existing);
     }
 

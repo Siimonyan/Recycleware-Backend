@@ -90,7 +90,6 @@ public class RequestService {
         if (estadoDenegado == null) return;
 
         for (Request r : solicitudesDelProducto) {
-            // Rechazamos todas las que no sean la actual y no estén ya finalizadas (Denegada/Entregada)
             if (r.getId() != idSolicitudExcluida && r.getState().getId() != 4 && r.getState().getId() != 5) {
                 r.setState(estadoDenegado);
                 requestRepository.save(r);
