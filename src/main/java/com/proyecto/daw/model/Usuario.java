@@ -44,4 +44,7 @@ public class Usuario {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private Rol rol;
+
+    @Column(name = "activo", columnDefinition = "boolean default true")
+    private Boolean activo = true;
 }

@@ -157,16 +157,50 @@ public class AdminController {
                 org.springframework.security.core.userdetails.UserDetails userDetails = (org.springframework.security.core.userdetails.UserDetails) auth.getPrincipal();
                 Usuario currentAdmin = usuarioService.findByCorreo(userDetails.getUsername());
                 if (currentAdmin != null && currentAdmin.getId().equals(id)) {
-                    return ResponseEntity.status(403).body(java.util.Map.of("error", "No puedes eliminar tu propia cuenta de administrador."));
+                    return ResponseEntity.status(403).body(java.util.Map.of("error", "No puedes desactivar tu propia cuenta de administrador."));
                 }
             }
 
-            usuarioService.deleteById(id);
-            return ResponseEntity.ok().build();
-        } catch (org.springframework.dao.DataIntegrityViolationException e) {
-            return ResponseEntity.status(409).body(java.util.Map.of("error", "No se puede eliminar el usuario porque tiene donaciones, solicitudes o mensajes asociados."));
+            Usuario usuario = usuarioService.findById(id);
+            if (usuario == null) {
+                return ResponseEntity.notFound().build();
+            }
+
+            // Alternar estado activo (si era null o true -> false, si era false -> true)
+            boolean nuevoEstado = usuario.getActivo() != null && !usuario.getActivo();
+
+            // Si el nuevo estado es inactivo (desactivar), aplicamos las validaciones de negocio
+            if (!nuevoEstado) {
+                // 1. Validar donaciones pendientes (id_estado = 1) o en recogida (id_estado = 2)
+                List<Donation> donaciones = donationService.findByUsuarioId(id);
+                for (Donation d : donaciones) {
+                    if (d.getEstado() != null && (d.getEstado().getId() == 1 || d.getEstado().getId() == 2)) {
+                        return ResponseEntity.status(409).body(java.util.Map.of("error", "No se puede desactivar: El usuario tiene donaciones pendientes de recogida."));
+                    }
+                }
+
+                // 2. Validar solicitudes aprobadas (id_estado = 3)
+                List<Request> solicitudes = requestService.obtenerSolicitudesPorUsuario(id);
+                for (Request r : solicitudes) {
+                    if (r.getState() != null && r.getState().getId() == 3) {
+                        return ResponseEntity.status(409).body(java.util.Map.of("error", "No se puede desactivar: El usuario tiene solicitudes aprobadas pendientes de entrega."));
+                    }
+                }
+
+                // 3. Denegar automáticamente solicitudes en revisión (id_estado = 2) o pendientes (id_estado = 1)
+                for (Request r : solicitudes) {
+                    if (r.getState() != null && (r.getState().getId() == 1 || r.getState().getId() == 2)) {
+                        requestService.updateStatus(r.getId(), 4); // 4 = Denegada
+                    }
+                }
+            }
+
+            usuario.setActivo(nuevoEstado);
+            usuarioService.actualizarUsuario(usuario);
+
+            return ResponseEntity.ok(usuario);
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(java.util.Map.of("error", "Error interno al intentar eliminar el usuario."));
+            return ResponseEntity.status(500).body(java.util.Map.of("error", "Error interno al intentar cambiar el estado del usuario."));
         }
     }
 
