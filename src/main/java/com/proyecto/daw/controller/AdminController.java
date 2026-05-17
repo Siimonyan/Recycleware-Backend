@@ -88,7 +88,7 @@ public class AdminController {
     }
 
     @PutMapping("/mensajes/{id}")
-    public ResponseEntity<Contact> respondToMessage(@PathVariable int id, @RequestBody Map<String, String> body) {
+    public ResponseEntity<?> respondToMessage(@PathVariable int id, @RequestBody Map<String, String> body) {
         Contact contact = contactService.findById(id);
         if (contact == null) return ResponseEntity.notFound().build();
 
@@ -97,7 +97,11 @@ public class AdminController {
         contact.setLeido(true);
         contact.setFechaRespuesta(java.time.LocalDateTime.now());
         
-        return ResponseEntity.ok(contactService.save(contact));
+        contactService.save(contact);
+        
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Mensaje respondido con éxito");
+        return ResponseEntity.ok(response);
     }
 
     // --- GESTIÓN DE USUARIOS ---
